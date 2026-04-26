@@ -1,0 +1,33 @@
+# Виртуальное окружение
+venv/
+env/
+__pycache__/
+*.pyc
+
+# Файлы с секретами
+.env
+*.env
+
+# Базы данных (если локальные)
+*.db
+*.sqlite
+*.sqlite3
+
+# Папка загрузок (но сами файлы не нужны, папку можно)
+static/uploads/avatars/*
+static/uploads/posts/*
+!static/uploads/avatars/.gitkeep
+!static/uploads/posts/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Логи
+*.log
+
+static/uploads/avatars/*
+static/uploads/posts/*
+!static/uploads/avatars/.gitkeep
+!static/uploads/posts/.gitkeep
