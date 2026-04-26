@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Моя стена</title>
+    <link rel="stylesheet" href="/static/style/wall_style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Левая боковая панель -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>Bananza</h2>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-page="wall">
+                    <span class="icon">🏠</span>
+                    <span>Моя стена</span>
+                </a>
+                <a href="#" class="nav-item" data-page="news">
+                    <span class="icon">📰</span>
+                    <span>Новости</span>
+                </a>
+                <a href="#" class="nav-item" data-page="friends">
+                    <span class="icon">👥</span>
+                    <span>Друзья</span>
+                </a>
+                <a href="#" class="nav-item" data-page="stats">
+                    <span class="icon">📊</span>
+                    <span>Статистика</span>
+                </a>
+            </nav>
+
+            <!-- Кнопка заявок -->
+            <button class="requests-btn" id="requests-btn">
+                <span>📨 Входящие заявки</span>
+                <span id="requests-count" class="requests-count"></span>
+            </button>
+
+            <!-- Кнопка выхода -->
+            <button class="logout-btn" id="logout-btn">🚪 Выйти</button>
+        </aside>
+
+        <!-- Основной контент -->
+        <main class="main-content">
+            <!-- Аватар и кнопка изменения -->
+            <div class="avatar-section">
+                <div class="avatar-container">
+                    <img src="/static/default-avatar.svg" alt="Аватар" class="avatar-preview" id="avatar-preview">
+                    <label for="avatar-upload" class="change-avatar-btn" id="change-avatar-btn">
+                        📷
+                    </label>
+                    <input type="file" id="avatar-upload" accept="image/jpeg,image/png,image/gif,image/webp" style="display: none;">
+                </div>
+            </div>
+
+            <!-- Информация о пользователе -->
+            <div class="user-info-header">
+                <h1 class="username" id="username"></h1>
+                <div class="status-container">
+                    <p class="user-status" id="user-status"></p>
+                    <button class="edit-status-btn" id="edit-status-btn">✏️</button>
+                </div>
+            </div>
+
+            <!-- Контент для стены -->
+            <div id="wall-content">
+                <div class="publish-block">
+                    <button class="publish-btn" id="publish-btn">📝 Опубликовать запись</button>
+                </div>
+                <div id="posts-feed"></div>
+            </div>
+
+            <!-- Контент для новостей -->
+            <div id="news-content" style="display: none;">
+                <div class="news-header">
+                    <h3>Новости друзей</h3>
+                </div>
+                <div id="news-feed" class="posts-feed">
+                    <div class="post-card">
+                        <p style="text-align: center; color: #888;">Загрузка...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Контент для друзей -->
+            <div id="friends-content" style="display: none;">
+                <div class="friends-tabs">
+                    <button class="friends-tab active" data-friend-tab="my">Мои друзья</button>
+                    <button class="friends-tab" data-friend-tab="find">Найти друзей</button>
+                </div>
+                
+                <div id="my-friends-list" class="friends-list-container">
+                    <div class="friend-card">
+                        <p style="color: #888; text-align: center; width: 100%;">Загрузка...</p>
+                    </div>
+                </div>
+                
+                <div id="find-friends-list" class="friends-list-container" style="display: none;">
+                    <div class="friend-card">
+                        <p style="color: #888; text-align: center; width: 100%;">Загрузка...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Контент для статистики -->
+            <div id="stats-content" style="display: none;">
+                <div class="stats-header">
+                    <h3>Статистика постов за последние 7 дней</h3>
+                </div>
+                <div class="stats-container">
+                    <canvas id="postsChart" width="400" height="200"></canvas>
+                </div>
+                <div id="stats-summary" class="stats-summary"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Модальное окно для создания поста -->
+    <div id="post-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Новая запись</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <textarea id="new-post-content" placeholder="Что у вас нового?" rows="4"></textarea>
+                <div class="image-upload-container">
+                    <label for="post-image" class="image-upload-label">
+                        📷 Добавить изображение
+                    </label>
+                    <input type="file" id="post-image" accept="image/jpeg,image/png,image/gif,image/webp" style="display: none;">
+                    <div id="image-preview" class="image-preview" style="display: none;">
+                        <img id="preview-img" src="" alt="Preview">
+                        <button type="button" id="remove-image" class="remove-image-btn">✕</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="submit-post-btn" class="submit-btn">Опубликовать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для редактирования статуса -->
+    <div id="status-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Редактировать статус</h3>
+                <span class="close-status">&times;</span>
+            </div>
+            <div class="modal-body">
+                <textarea id="status-input" placeholder="Ваш статус..." rows="3" maxlength="200"></textarea>
+                <p class="char-counter">0/200</p>
+            </div>
+            <div class="modal-footer">
+                <button id="save-status-btn" class="submit-btn">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для входящих заявок -->
+    <div id="requests-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Входящие заявки</h3>
+                <span class="close-requests">&times;</span>
+            </div>
+            <div class="modal-body" id="requests-list">
+                <p style="text-align: center; color: #888;">Загрузка...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/scripts/wall_script.js"></script>
+</body>
+</html>
